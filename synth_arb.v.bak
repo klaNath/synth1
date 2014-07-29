@@ -94,7 +94,6 @@ module  synth_arb (
       casex(adrs)
         8'b00000001 : d2ctrl_synth = 8'b01000001;
         8'b00010001 : d2ctrl_synth = 8'b00010001;
-        8'b00100001 : d2ctrl_synth = 8'b01010001;
         8'b1000xxxx : d2ctrl_synth = 8'b00100000;
         default     : d2ctrl_synth = 0;
       endcase

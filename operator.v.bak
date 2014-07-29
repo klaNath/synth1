@@ -12,11 +12,11 @@ module operator(
   output  wire          wreq;
   output  wire  [15:0]  data_out;
 
-          wire  [15:0]  sine_out;
+  signed  wire  [15:0]  sine_out;
           wire  [20:0]  phase;
           
           reg   [20:0]  phase_1;
-          reg   [31:0]  accum_1;
+  signed  reg   [31:0]  accum_1;
           reg   [23:0]  add_1;
           reg   [7:0]   p_synth_ctrl;
           reg           wreq_r;

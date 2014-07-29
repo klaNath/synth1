@@ -71,7 +71,7 @@ module  synth1(
     .wreq(wrreq));
     
   fifo_tx	fifo_tx (
-	.aclr ( clr ),
+	.aclr ( clr_n ),
 	.data ( fifo_in ),
 	.rdclk ( clk ),
 	.rdreq ( rdreq ),
@@ -106,6 +106,5 @@ module  synth1(
 /*Assign*/
 
   assign fifo_in = {16'd0, data_out};
-  assign clr = ~clr_n;
   
 endmodule

@@ -24,7 +24,7 @@ initial sine_out_reg <= 0;
 
 always @(posedge clk)
 begin
-        phase_21 <= phase_21 + 21'd307582;
+        phase_21 <= phase_21 + 21'd30752;
         sine_out_reg <= sine_out;
 end
 
