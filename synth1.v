@@ -2,6 +2,7 @@
  *This HDL is top level module.
  *HDL depends on other modules. 
  *It is
+ *  spi_rx.v
  *  synth_arb.v
  *  operator.v
  *  -sine.v
@@ -28,7 +29,7 @@ module  synth1(
 /*Signal Declaration*/
 
   reg           clr_reg1, clr_reg2;
-  wire          clr_n, wrreq, wwreq2arb, rdreq, full, empty;
+  wire          clr_n, wrreq, wwreq2arb, rdreq, full, empty, clk_int, clk_ext;
   wire  [20:0]  phase;
   wire  [15:0]  data_out;
   wire  [31:0]  data, fifo_in;
@@ -41,7 +42,7 @@ module  synth1(
 /*Instantiation Modules*/
 
   synth_arb arbiter(
-    .clk(clk),
+    .clk(clk_int),
     .reset_n(clr_n), 
     .memadrs(memadrs), 
     .memdata(memdata), 
@@ -51,8 +52,18 @@ module  synth1(
     .fifo_full(full)
     );
     
+  spi_rx spi_rx(
+    .clk(clk_int),
+    .reset_n(clr_n),
+    .sdi(sdi),
+    .sck(sck),
+    .ss_n(ss_n),
+    .adrs(memadrs),
+    .data(memdata),
+    .rx_valid(wrreq2arb));
+    
   lj24tx lj24tx(
-    .clk(clk),
+    .clk(clk_int),
     .reset_n(clr_n), 
     .fifo_rdreq(rdreq), 
     .fifo_empty(empty),
@@ -63,7 +74,7 @@ module  synth1(
     );
     
   operator operator_1(
-    .clk(clk),
+    .clk(clk_int),
     .reset_n(clr_n), 
     .synth_ctrl(synth_ctrl), 
     .synth_data(synth_data), 
@@ -73,14 +84,21 @@ module  synth1(
   fifo_tx	fifo_tx (
 	.aclr ( clr ),
 	.data ( fifo_in ),
-	.rdclk ( clk ),
+	.rdclk ( clk_ext ),
 	.rdreq ( rdreq ),
-	.wrclk ( clk ),
+	.wrclk ( clk_int ),
 	.wrreq ( wrreq ),
 	.q ( data ),
 	.rdempty ( empty ),
 	.wrfull ( full )
 	);
+    
+  pll	pll (
+	.inclk0 ( clk ),
+	.c0 ( clk_int ),
+	.c1 ( clk_ext )
+	);
+
   
 
 /*End Instantiation*/

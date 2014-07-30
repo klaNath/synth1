@@ -520,7 +520,7 @@ module	diff_rom	(
 		9'D507	:	sin_rom =	2	;
 		9'D508	:	sin_rom =	1	;
 		9'D509	:	sin_rom =	1	;
-		9'D510	:	sin_rom =	1	;
+		9'D510	:	sin_rom =	0	;
 		9'D511	:	sin_rom =	0	;
 		default	:	sin_rom =	0	;
 		endcase				
