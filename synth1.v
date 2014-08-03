@@ -10,6 +10,7 @@
  *   -sin_rom.v
  *  lj24tx.v
  *  fifo_tx.v(Altera QuartusII Megafunction IP dcfifo)
+ *  pll.v(Altera QuartusII Megafunction IP altpll)
  *
  *External MicroController can controll module by 3wire-Serial interface like SPI(mode 0,0)
  *Output data format is Left Justified 16bit Two-Complement data. 
@@ -24,7 +25,8 @@ module  synth1(
         input   wire        ss_n,
         output  wire        lrck,
         output  wire        sdo,
-        output  wire        bck);
+        output  wire        bck,
+        input   wire  [3:0] gnd);
         
 /*Signal Declaration*/
 
@@ -33,7 +35,7 @@ module  synth1(
   wire  [20:0]  phase;
   wire  [15:0]  data_out;
   wire  [31:0]  data, fifo_in;
-  wire  [7:0]   synth_ctrl, synth_data, memadrs, memdata;
+  wire  [7:0]   synth_ctrl, synth_data, memadrs, memdata, clr_cnt;
 
   
 
@@ -63,7 +65,7 @@ module  synth1(
     .rx_valid(wrreq2arb));
     
   lj24tx lj24tx(
-    .clk(clk_int),
+    .clk(clk_ext),
     .reset_n(clr_n), 
     .fifo_rdreq(rdreq), 
     .fifo_empty(empty),
@@ -105,9 +107,9 @@ module  synth1(
 
 /*Reset Logic*/
 
-  assign clr_n = clr_reg2;
+  assign clr_n = clr_reg2 | (~&clr_cnt);
 
-  always @(posedge clk, negedge reset_n)
+  always @(posedge clk_int, negedge reset_n)
   begin
     if(!reset_n)
       begin
@@ -121,9 +123,17 @@ module  synth1(
       end
   end
   
+  always @(posedge clk_int)
+  begin
+    if(!reset_n) clr_cnt <= 0;
+    else if(clr_cnt == 8'hFF) clr_cnt <= clr_cnt;
+    else clr_cnt <= clr_cnt + 1;
+    
+    
+  
 /*Assign*/
 
-  assign fifo_in = {16'd0, data_out};
+  assign fifo_in = {12'd0, gnd, data_out};
   assign clr = ~clr_n;
   
 endmodule
