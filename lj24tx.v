@@ -7,14 +7,14 @@ module lj24tx(
   input   wire  [31:0]  fifo_data,
   output  wire  lrck,
   output  wire  bck,
-  output  reg  data);
+  output  wire  data);
 
   reg   [5:0]   tx_cnt;
   reg   [31:0]  audio_buf_a, audio_buf_b;
 
   assign  bck = ~clk & reset_n;
   assign  lrck = ~tx_cnt[4] & reset_n;
-
+  assign  data = (tx_cnt[5] == 0)? audio_buf_a[31] : audio_buf_b[31];  
   always @(posedge clk, negedge reset_n)
   begin
     if(!reset_n)
@@ -23,11 +23,10 @@ module lj24tx(
       audio_buf_b <= 0;
       tx_cnt <= 0;
       fifo_rdreq <= 0;
-      data <= 0;
     end
     else if(tx_cnt[5] == 0)
     begin
-      {data, audio_buf_a} <= {audio_buf_a, 1'b0};
+      audio_buf_a <= {audio_buf_a[30:0], 1'b0};
       tx_cnt <= tx_cnt + 1;
       if(tx_cnt == 6'b010000 && fifo_empty == 0) fifo_rdreq <= 1;
       else if(tx_cnt == 6'b010001 && fifo_empty == 0) fifo_rdreq <= 0;
@@ -36,7 +35,7 @@ module lj24tx(
     end
     else if(tx_cnt[5] == 1)
     begin
-      {data, audio_buf_b} <= {audio_buf_b, 1'b0};
+      audio_buf_b <= {audio_buf_b[30:0], 1'b0};
       tx_cnt <= tx_cnt + 1;
       if(tx_cnt == 6'b110000 && fifo_empty == 0) fifo_rdreq <= 1;
       else if(tx_cnt == 6'b110001 && fifo_empty == 0) fifo_rdreq <= 0;

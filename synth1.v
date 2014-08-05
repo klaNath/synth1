@@ -23,9 +23,7 @@ module  synth1(
         input   wire        sdi, 
         input   wire        sck,
         input   wire        ss_n,
-        output  wire        lrck,
-        output  wire        sdo,
-        output  wire        bck,
+        output  wire        st,
         input   wire  [3:0] gnd);
         
 /*Signal Declaration*/
@@ -35,7 +33,8 @@ module  synth1(
   wire  [20:0]  phase;
   wire  [15:0]  data_out;
   wire  [31:0]  data, fifo_in;
-  wire  [7:0]   synth_ctrl, synth_data, memadrs, memdata, clr_cnt;
+  wire  [7:0]   synth_ctrl, synth_data, memadrs, memdata;
+  reg	  [7:0]	 clr_cnt = 8'h00;
 
   
 
@@ -64,15 +63,13 @@ module  synth1(
     .data(memdata),
     .rx_valid(wrreq2arb));
     
-  lj24tx lj24tx(
+  dsm dsm(
     .clk(clk_ext),
     .reset_n(clr_n), 
-    .fifo_rdreq(rdreq), 
-    .fifo_empty(empty),
-    .fifo_data(data),
-    .lrck(lrck),
-    .bck(bck),
-    .data(sdo)
+    .rdreq(rdreq), 
+    .empty(empty),
+    .data_in(data),
+    .outsignal(st)
     );
     
   operator operator_1(
@@ -125,9 +122,9 @@ module  synth1(
   
   always @(posedge clk_int)
   begin
-    if(!reset_n) clr_cnt <= 0;
-    else if(clr_cnt == 8'hFF) clr_cnt <= clr_cnt;
+    if(clr_cnt == 8'hFF) clr_cnt <= clr_cnt;
     else clr_cnt <= clr_cnt + 1;
+  end
     
     
   
