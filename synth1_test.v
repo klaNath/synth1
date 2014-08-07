@@ -1,7 +1,7 @@
 
 module synth1_test();
   
-  `timescale 1ns / 1ns
+  `timescale 1ps / 1ps
   
   reg         clk, reset_n, ss_n, sck_r;
   

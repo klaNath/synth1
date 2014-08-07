@@ -23,7 +23,9 @@ module  synth1(
         input   wire        sdi, 
         input   wire        sck,
         input   wire        ss_n,
-        output  wire        st,
+        output  wire        bck,
+		  output	 wire			 lrck,
+		  output  wire			 sdo,
         input   wire  [3:0] gnd);
         
 /*Signal Declaration*/
@@ -63,13 +65,15 @@ module  synth1(
     .data(memdata),
     .rx_valid(wrreq2arb));
     
-  dsm dsm(
+  lj24tx lj24tx(
     .clk(clk_ext),
     .reset_n(clr_n), 
-    .rdreq(rdreq), 
-    .empty(empty),
-    .data_in(data),
-    .outsignal(st)
+    .fifo_rdreq(rdreq), 
+    .fifo_empty(empty),
+    .fifo_data(data),
+    .lrck(st),
+	 .bck(bck),
+	 .data(sdo)
     );
     
   operator operator_1(
