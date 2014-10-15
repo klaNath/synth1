@@ -1,6 +1,6 @@
 
 module spi_rx(
-  clk, 
+  clk,
   reset_n,
   sdi,
   sck,
@@ -8,22 +8,21 @@ module spi_rx(
   adrs,
   data,
   rx_valid);
-  
+
   input   wire          clk, reset_n, sdi, sck, ss_n;
   output  wire          rx_valid;
   output  wire  [7:0]   adrs, data;
-  
+
           reg   [15:0]  shift_reg, rx_buf1, rx_buf2;
           reg   [3:0]   rx_cnt;
           reg   [2:0]   valid_sync;
-          
-          wire          rx_done;
-          
+          wire          rx_done
+
   assign  rx_done = &rx_cnt;
   assign  adrs = rx_buf2[15:8];
   assign  data = rx_buf2[7:0];
   assign  rx_valid = valid_sync[2];
-  
+
   always @(posedge clk, negedge reset_n)
   begin
     if(!reset_n)
@@ -38,7 +37,7 @@ module spi_rx(
         else rx_buf2 <= rx_buf2;
       end
   end
-  
+
   always @(negedge sck, negedge reset_n)
   begin
     if(!reset_n)
@@ -54,6 +53,5 @@ module spi_rx(
         if(rx_done) rx_buf1 <= {shift_reg, sdi};
       end
   end
-      
-      
+
 endmodule

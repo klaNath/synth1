@@ -1,6 +1,6 @@
 /*
  *This HDL is top level module.
- *HDL depends on other modules. 
+ *HDL depends on other modules.
  *It is
  *  spi_rx.v
  *  synth_arb.v
@@ -13,14 +13,14 @@
  *  pll.v(Altera QuartusII Megafunction IP altpll)
  *
  *External MicroController can controll module by 3wire-Serial interface like SPI(mode 0,0)
- *Output data format is Left Justified 16bit Two-Complement data. 
- *It is based on PCM1741 default interface. 
+ *Output data format is Left Justified 16bit Two-Complement data.
+ *It is based on PCM1741 default interface.
  */
 
 module  synth1(
         input   wire        clk,
-        input   wire        reset_n, 
-        input   wire        sdi, 
+        input   wire        reset_n,
+        input   wire        sdi,
         input   wire        sck,
         input   wire        ss_n,
         output  wire        bck,
@@ -40,16 +40,16 @@ module  synth1(
 
   
 
-/*End Declaration*/        
+/*End Declaration*/
         
 /*Instantiation Modules*/
 
   synth_arb arbiter(
     .clk(clk_int),
-    .reset_n(clr_n), 
-    .memadrs(memadrs), 
-    .memdata(memdata), 
-    .wreq(wrreq2arb), 
+    .reset_n(clr_n),
+    .memadrs(memadrs),
+    .memdata(memdata),
+    .wreq(wrreq2arb),
     .synth_ctrl(synth_ctrl),
     .synth_data(synth_data),
     .fifo_full(full)
@@ -67,8 +67,8 @@ module  synth1(
     
   lj24tx lj24tx(
     .clk(clk_ext),
-    .reset_n(clr_n), 
-    .fifo_rdreq(rdreq), 
+    .reset_n(clr_n),
+    .fifo_rdreq(rdreq),
     .fifo_empty(empty),
     .fifo_data(data),
     .lrck(st),
@@ -78,10 +78,10 @@ module  synth1(
     
   operator operator_1(
     .clk(clk_int),
-    .reset_n(clr_n), 
-    .synth_ctrl(synth_ctrl), 
-    .synth_data(synth_data), 
-    .data_out(data_out), 
+    .reset_n(clr_n),
+    .synth_ctrl(synth_ctrl),
+    .synth_data(synth_data),
+    .data_out(data_out),
     .wreq(wrreq));
     
   fifo_tx	fifo_tx (

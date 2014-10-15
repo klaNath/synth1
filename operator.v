@@ -1,12 +1,12 @@
 
 module operator(
   clk,
-  reset_n, 
-  synth_ctrl, 
-  synth_data, 
-  data_out, 
+  reset_n,
+  synth_ctrl,
+  synth_data,
+  data_out,
   wreq);
-  
+
   input   wire          clk, reset_n;
   input   wire  [7:0]   synth_data, synth_ctrl;
   output  wire          wreq;
@@ -14,19 +14,19 @@ module operator(
 
           wire  [15:0]  sine_out;
           wire  [20:0]  phase;
-          
+
           reg   [20:0]  phase_1;
           reg   [31:0]  accum_1;
           reg   [23:0]  add_1;
           reg   [7:0]   p_synth_ctrl;
           reg           wreq_r, wr_now;
-			 
+
   initial add_1 <= 19224;
-  
+
   assign  data_out = accum_1[15:0];
   assign  phase = phase_1;
   assign  wreq = wreq_r;
-  
+
   always @(posedge clk, negedge reset_n)
   begin
     if(!reset_n)
@@ -41,7 +41,7 @@ module operator(
       begin
         p_synth_ctrl <= synth_ctrl;
         case(synth_ctrl)
-          8'b00000001 : phase_1 <= phase_1 + 32'd4806;
+          8'b00000001 : phase_1 <= add_1;
           8'b10000001 : wreq_r <= 1;
           8'b01000001 : begin
                           add_1[7:0] <= synth_data;
@@ -67,9 +67,9 @@ module operator(
         endcase
       end
   end
-  
+
   sine sine(
     .phase(phase),
     .sine_out(sine_out));
-    
+
 endmodule
