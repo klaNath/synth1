@@ -16,7 +16,7 @@ module spi_rx(
           reg   [15:0]  shift_reg, rx_buf1, rx_buf2;
           reg   [3:0]   rx_cnt;
           reg   [2:0]   valid_sync;
-          wire          rx_done
+          wire          rx_done;
 
   assign  rx_done = &rx_cnt;
   assign  adrs = rx_buf2[15:8];
