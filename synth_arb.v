@@ -38,45 +38,45 @@ module  synth_arb (
     begin
       case(state_reg)
         8'D0    : state_reg <= state_reg + 1;
-        
+                                                                          //recovery reset while 16count
         8'D1    : begin
                     if(wait_cnt != 4'b1111) wait_cnt <= wait_cnt + 1;
                     else  state_reg <= state_reg + 1;
                   end
-                  
+                                                                          //step phase, operator 1
         8'D2    : begin
                     state_reg <= state_reg + 1;
                     synth_ctrl <= 8'b00000001;
                   end
-                  
+                                                                          //fifo full check, operator stall
         8'D3    : begin
                     synth_ctrl <= 8'b00000000;
                     if(fifo_full != 1) state_reg <= state_reg + 1;
                     else state_reg <= state_reg; 
                   end
-                  
+                                                                          //write req to fifo, operator 1
         8'D4    : begin
                     state_reg <= state_reg + 1;
                     synth_ctrl <= 8'b10000001;
                   end
-                  
+                                                                          //write wait
         8'D5    : begin
                     state_reg <= state_reg + 1;
                     synth_ctrl <= 8'b00000000;
                   end
-                  
+                                                                          //jump to state 2 if write strobe is not active
         8'D6    : begin
                     if(wreq_inter == 1) state_reg <= state_reg + 1;
                     else state_reg <= 2;
                   end
-                  
+                                                                          //get recieve data and command, write data
         8'D7    : begin
                     synth_data <= memdata;
                     synth_ctrl <= d2ctrl_synth(memadrs);
                     state_reg <= state_reg + 1;
                     w_done <= 1;
                   end
-                  
+                                                                          //finishing write data
         8'D8    : begin
                     state_reg <= 2;
                     synth_ctrl <= 8'b00000000;
@@ -92,7 +92,7 @@ module  synth_arb (
     input [7:0] adrs;
     begin
       casex(adrs)
-        8'b00000001 : d2ctrl_synth = 8'b01000001;
+        8'b00000001 : d2ctrl_synth = 8'b01000001;                 
         8'b00010001 : d2ctrl_synth = 8'b00010001;
         8'b00100001 : d2ctrl_synth = 8'b01010001;
         8'b1000xxxx : d2ctrl_synth = 8'b00100000;
